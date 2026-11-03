@@ -21,6 +21,14 @@ final class MenuBarController: NSObject {
         appState.onRequestShowPopover = { [weak self] in
             self?.showFloatingWindow()
         }
+        appState.onPinChanged = { [weak self] in
+            guard let self else { return }
+            (self.floatingWindow as? NSPanel)?.hidesOnDeactivate = !self.appState.isPinned
+            if self.appState.isPinned {
+                self.popover.performClose(nil)
+                self.showFloatingWindow()
+            }
+        }
     }
 
     func install() {
@@ -53,6 +61,10 @@ final class MenuBarController: NSObject {
     }
 
     func showPopover() {
+        if appState.isPinned {
+            showFloatingWindow()
+            return
+        }
         guard let button = statusItem.button else { return }
 
         NSApp.activate(ignoringOtherApps: true)
@@ -123,6 +135,8 @@ final class MenuBarController: NSObject {
             defer: false
         )
         window.title = "Flash Translate"
+        window.isFloatingPanel = true
+        window.hidesOnDeactivate = !appState.isPinned
         window.level = .floating
         window.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         window.isMovableByWindowBackground = false

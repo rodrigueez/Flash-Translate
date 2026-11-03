@@ -9,11 +9,15 @@ final class AppState: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var lastTriggerSource: String = ""
+    @Published var isPinned = false {
+        didSet { onPinChanged?() }
+    }
 
     let settingsStore: SettingsStore
     let permissionManager: PermissionManager
 
     var onRequestShowPopover: (() -> Void)?
+    var onPinChanged: (() -> Void)?
 
     private let textCaptureService: TextCaptureService
     private let translationService: TranslationService

@@ -24,6 +24,12 @@ struct TranslationPopoverView: View {
 
                 Spacer()
 
+                Toggle(isOn: $appState.isPinned) {
+                    Label("固定", systemImage: appState.isPinned ? "pin.fill" : "pin")
+                }
+                .toggleStyle(.button)
+                .help("固定后，切换应用时翻译窗口仍保持置顶显示。")
+
                 Button(captureButtonTitle) {
                     appState.captureAndTranslateSelection(triggerSource: "button")
                 }
