@@ -5,17 +5,20 @@ final class TranslationService {
     private let languageDirectionResolver: LanguageDirectionResolver
     private let googleService: GoogleTranslateService
     private let openAIService: OpenAICompatibleTranslateService
+    private let deepLService: DeepLTranslateService
 
     init(
         settingsStore: SettingsStore,
         languageDirectionResolver: LanguageDirectionResolver,
         googleService: GoogleTranslateService,
-        openAIService: OpenAICompatibleTranslateService
+        openAIService: OpenAICompatibleTranslateService,
+        deepLService: DeepLTranslateService
     ) {
         self.settingsStore = settingsStore
         self.languageDirectionResolver = languageDirectionResolver
         self.googleService = googleService
         self.openAIService = openAIService
+        self.deepLService = deepLService
     }
 
     func translate(text: String) async throws -> String {
@@ -27,6 +30,8 @@ final class TranslationService {
             return try await googleService.translate(text: text, direction: direction)
         case .openAICompatible:
             return try await openAIService.translate(text: text, direction: direction, settings: settings)
+        case .deepL:
+            return try await deepLService.translate(text: text, direction: direction, settings: settings)
         }
     }
 }

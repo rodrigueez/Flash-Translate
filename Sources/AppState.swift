@@ -54,7 +54,8 @@ final class AppState: ObservableObject {
             settingsStore: settingsStore,
             languageDirectionResolver: languageResolver,
             googleService: googleService,
-            openAIService: openAIService
+            openAIService: openAIService,
+            deepLService: DeepLTranslateService(httpClient: httpClient)
         )
         let hotkeyManager = HotkeyManager(settingsStore: settingsStore)
         let doubleCommandDetector = DoubleCommandDetector()

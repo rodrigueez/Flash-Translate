@@ -6,7 +6,7 @@
 
 - **双击 Command 键即可翻译** - 选中文字后快速双击 Command，悬浮窗自动出现在鼠标附近
 - **原生 SwiftUI** - 纯 Swift 编写，零延迟体验
-- **支持多种翻译服务** - 默认 Google Translate，支持自定义 OpenAI-compatible API
+- **支持多种翻译服务** - 默认 Google Translate，支持 DeepL API 和自定义 OpenAI-compatible API
 - **菜单栏常驻** - 不占 Dock 位置，随时可用
 - **优雅动画** - 淡入淡出效果，流畅自然
 - **智能边界检测** - 悬浮窗自动避开屏幕边缘
@@ -30,9 +30,27 @@
 
 ## ⚙️ 设置
 
-- **翻译服务** - 选择 Google 或自定义 API
-- **自定义 API** - 支持任何 OpenAI-compatible 接口
+- **翻译服务** - 选择 Google、DeepL 或 OpenAI Compatible
+- **DeepL API** - 选择 Free 或 Pro，填写对应的 DeepL API Key；两种方案分别连接 `api-free.deepl.com` 和 `api.deepl.com`，API Key 与 OpenAI 配置分别保存。需要 DeepL API 订阅，普通 DeepL Pro 翻译订阅不等同于 API 订阅。
+- **OpenAI Compatible** - Base URL 填写包含 `/v1` 的接口地址，并配置 API Key 和 Model。
+- **Thinking effort** - 默认不发送参数；可选择 `none`、`minimal`、`low`、`medium`、`high`、`xhigh`、`max`，通过 Chat Completions 的 `reasoning_effort` 字段发送。各接口与模型支持的档位不同，不支持时请切回默认。
+- **测试翻译** - DeepL 和 OpenAI Compatible 均可在设置中测试当前配置。
 - **快捷键** - 默认双击 Command，也可自定义快捷键
+
+API Key 沿用项目现有方式保存在本机 UserDefaults 中。升级时会保留旧版 API 和快捷键配置。
+
+接口参考：[DeepL 文本翻译](https://developers.deepl.com/api-reference/translate)、[OpenAI Chat Completions](https://developers.openai.com/api/reference/resources/chat/subresources/completions/methods/create)。
+
+## 本地开发
+
+需要 macOS 14 或更新版本，以及支持 Swift 5.9 的 Xcode / Swift 工具链。
+
+```sh
+swift test
+swift build -c release
+```
+
+也可使用 Xcode 打开 `FlashTranslate.xcodeproj` 构建应用。
 
 ## 🛠 技术栈
 

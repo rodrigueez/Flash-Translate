@@ -41,7 +41,8 @@ struct OpenAICompatibleTranslateService {
             messages: [
                 .init(role: "system", content: "You are a translation engine. Return only the translated text with no explanation."),
                 .init(role: "user", content: "Translate the following text from \(direction.sourceLanguageCode) to \(direction.targetLanguageCode):\n\n\(text)")
-            ]
+            ],
+            reasoningEffort: settings.reasoningEffort
         )
         request.httpBody = try JSONEncoder().encode(payload)
         return request
@@ -51,6 +52,12 @@ struct OpenAICompatibleTranslateService {
 struct OpenAIChatRequest: Codable, Equatable {
     let model: String
     let messages: [OpenAIChatMessage]
+    let reasoningEffort: ReasoningEffort?
+
+    enum CodingKeys: String, CodingKey {
+        case model, messages
+        case reasoningEffort = "reasoning_effort"
+    }
 }
 
 struct OpenAIChatMessage: Codable, Equatable {

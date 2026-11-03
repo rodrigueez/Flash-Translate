@@ -30,6 +30,8 @@
 		A10000250000000000000000 /* LanguageDirectionResolverTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000250000000000000001 /* LanguageDirectionResolverTests.swift */; };
 		A10000260000000000000000 /* SettingsStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000260000000000000001 /* SettingsStoreTests.swift */; };
 		A10000270000000000000000 /* OpenAICompatibleTranslateServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A10000270000000000000001 /* OpenAICompatibleTranslateServiceTests.swift */; };
+		A100002B0000000000000000 /* DeepLTranslateService.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002B0000000000000001 /* DeepLTranslateService.swift */; };
+		A100002C0000000000000000 /* DeepLTranslateServiceTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A100002C0000000000000001 /* DeepLTranslateServiceTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -69,6 +71,8 @@
 		A10000280000000000000000 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = SOURCE_ROOT; };
 		A10000290000000000000000 /* FlashTranslate.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = FlashTranslate.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A100002A0000000000000000 /* FlashTranslateTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = FlashTranslateTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A100002B0000000000000001 /* DeepLTranslateService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Sources/Translation/DeepLTranslateService.swift; sourceTree = SOURCE_ROOT; };
+		A100002C0000000000000001 /* DeepLTranslateServiceTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tests/DeepLTranslateServiceTests.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -181,6 +185,7 @@
 		A10004090000000000000000 /* Translation */ = {
 			isa = PBXGroup;
 			children = (
+				A100002B0000000000000001 /* DeepLTranslateService.swift */,
 				A100001E0000000000000000 /* TranslationService.swift */,
 				A100001F0000000000000000 /* GoogleTranslateService.swift */,
 				A10000200000000000000000 /* OpenAICompatibleTranslateService.swift */,
@@ -192,6 +197,7 @@
 		A100040A0000000000000000 /* Tests */ = {
 			isa = PBXGroup;
 			children = (
+				A100002C0000000000000001 /* DeepLTranslateServiceTests.swift */,
 				A10000250000000000000001 /* LanguageDirectionResolverTests.swift */,
 				A10000260000000000000001 /* SettingsStoreTests.swift */,
 				A10000270000000000000001 /* OpenAICompatibleTranslateServiceTests.swift */,
@@ -307,6 +313,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A100002B0000000000000000 /* DeepLTranslateService.swift in Sources */,
 				A10000010000000000000000 /* FlashTranslateApp.swift in Sources */,
 				A10000020000000000000000 /* AppBootstrap.swift in Sources */,
 				A10000030000000000000000 /* AppDelegate.swift in Sources */,
@@ -334,6 +341,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A100002C0000000000000000 /* DeepLTranslateServiceTests.swift in Sources */,
 				A10000250000000000000000 /* LanguageDirectionResolverTests.swift in Sources */,
 				A10000260000000000000000 /* SettingsStoreTests.swift in Sources */,
 				A10000270000000000000000 /* OpenAICompatibleTranslateServiceTests.swift in Sources */,

@@ -14,7 +14,7 @@ struct FlashTranslateApp: App {
         Settings {
             SettingsView()
                 .environmentObject(appState)
-                .frame(width: 520, height: 360)
+                .frame(width: 520, height: 500)
         }
         .commands {
             CommandGroup(replacing: .appInfo) { }

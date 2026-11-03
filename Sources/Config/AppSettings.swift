@@ -6,9 +6,33 @@ struct AppSettings: Codable, Equatable {
     var baseURL: String = ""
     var apiKey: String = ""
     var model: String = "openai/gpt-5-nano"
+    var reasoningEffort: ReasoningEffort?
+    var deepLAPIKey: String = ""
+    var deepLPlan: DeepLPlan = .free
     var hotkey: KeyboardShortcut = .defaultShortcut
     var enableCtrlSpace: Bool = true
     var enableDoubleCommand: Bool = true
+
+    init() {}
+
+    private enum CodingKeys: String, CodingKey {
+        case provider, baseURL, apiKey, model, reasoningEffort, deepLAPIKey, deepLPlan
+        case hotkey, enableCtrlSpace, enableDoubleCommand
+    }
+
+    init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        provider = try container.decodeIfPresent(TranslationProvider.self, forKey: .provider) ?? .google
+        baseURL = try container.decodeIfPresent(String.self, forKey: .baseURL) ?? ""
+        apiKey = try container.decodeIfPresent(String.self, forKey: .apiKey) ?? ""
+        model = try container.decodeIfPresent(String.self, forKey: .model) ?? "openai/gpt-5-nano"
+        reasoningEffort = try container.decodeIfPresent(ReasoningEffort.self, forKey: .reasoningEffort)
+        deepLAPIKey = try container.decodeIfPresent(String.self, forKey: .deepLAPIKey) ?? ""
+        deepLPlan = try container.decodeIfPresent(DeepLPlan.self, forKey: .deepLPlan) ?? .free
+        hotkey = try container.decodeIfPresent(KeyboardShortcut.self, forKey: .hotkey) ?? .defaultShortcut
+        enableCtrlSpace = try container.decodeIfPresent(Bool.self, forKey: .enableCtrlSpace) ?? true
+        enableDoubleCommand = try container.decodeIfPresent(Bool.self, forKey: .enableDoubleCommand) ?? true
+    }
 
     var hotkeyDisplay: String {
         get { hotkey.displayString }
@@ -23,6 +47,7 @@ struct AppSettings: Codable, Equatable {
 enum TranslationProvider: String, Codable, CaseIterable, Identifiable {
     case google
     case openAICompatible
+    case deepL
 
     var id: String { rawValue }
 
@@ -32,6 +57,27 @@ enum TranslationProvider: String, Codable, CaseIterable, Identifiable {
             return "Google"
         case .openAICompatible:
             return "OpenAI Compatible"
+        case .deepL:
+            return "DeepL"
+        }
+    }
+}
+
+enum ReasoningEffort: String, Codable, CaseIterable, Identifiable {
+    case none, minimal, low, medium, high, xhigh, max
+
+    var id: String { rawValue }
+}
+
+enum DeepLPlan: String, Codable, CaseIterable, Identifiable {
+    case free, pro
+
+    var id: String { rawValue }
+
+    var baseURL: String {
+        switch self {
+        case .free: return "https://api-free.deepl.com"
+        case .pro: return "https://api.deepl.com"
         }
     }
 }

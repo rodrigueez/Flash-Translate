@@ -26,7 +26,9 @@ struct SettingsView: View {
                     }
                 }
                 .pickerStyle(.segmented)
+                .disabled(isTesting)
                 .onChange(of: currentProvider) { oldValue, newValue in
+                    testResult = ""
                     var settings = appState.settingsStore.settings
                     settings.provider = newValue
                     appState.settingsStore.save(settings)
@@ -49,23 +51,45 @@ struct SettingsView: View {
                         .textFieldStyle(.roundedBorder)
                     TextField("Model", text: settingsBinding.model, prompt: Text("openai/gpt-5-nano"))
                         .textFieldStyle(.roundedBorder)
-
-                    HStack {
-                        Button(isTesting ? "测试中..." : "测试翻译") {
-                            testTranslation()
-                        }
-                        .disabled(isTesting || appState.settingsStore.settings.baseURL.isEmpty || appState.settingsStore.settings.apiKey.isEmpty)
-
-                        if !testResult.isEmpty {
-                            Text(testResult)
-                                .font(.caption)
-                                .foregroundStyle(testResult.contains("成功") ? .green : .red)
+                    Picker("Thinking effort", selection: settingsBinding.reasoningEffort) {
+                        Text("默认（不发送）").tag(ReasoningEffort?.none)
+                        ForEach(ReasoningEffort.allCases) { effort in
+                            Text(effort.rawValue).tag(Optional(effort))
                         }
                     }
+                    .help("发送 reasoning_effort；可用档位取决于接口和模型。")
 
                     Text("Base URL 需要包含 /v1，例如：https://api.openai.com/v1")
                         .font(.caption)
                         .foregroundStyle(.secondary)
+                }
+            }
+
+            if currentProvider == .deepL {
+                Section("DeepL API") {
+                    Picker("API 方案", selection: settingsBinding.deepLPlan) {
+                        Text("Free").tag(DeepLPlan.free)
+                        Text("Pro").tag(DeepLPlan.pro)
+                    }
+                    SecureField("API Key", text: settingsBinding.deepLAPIKey)
+                        .textFieldStyle(.roundedBorder)
+                }
+            }
+
+            if currentProvider != .google {
+                Section {
+                    HStack {
+                        Button(isTesting ? "测试中..." : "测试翻译") {
+                            testTranslation()
+                        }
+                        .disabled(isTesting || !canTestTranslation)
+
+                        if !testResult.isEmpty {
+                            Text(testResult)
+                                .font(.caption)
+                                .foregroundStyle(testResult.hasPrefix("✓") ? .green : .red)
+                        }
+                    }
                 }
             }
 
@@ -92,6 +116,16 @@ struct SettingsView: View {
         }
     }
 
+    private var canTestTranslation: Bool {
+        let settings = appState.settingsStore.settings
+        if currentProvider == .deepL {
+            return !settings.deepLAPIKey.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+        return [settings.baseURL, settings.apiKey, settings.model].allSatisfy {
+            !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        }
+    }
+
     private func testTranslation() {
         isTesting = true
         testResult = ""
@@ -99,18 +133,14 @@ struct SettingsView: View {
         Task {
             do {
                 let httpClient = HTTPClient()
-                let openAIService = OpenAICompatibleTranslateService(httpClient: httpClient)
-                let languageResolver = LanguageDirectionResolver()
-                let settings = appState.settingsStore.settings
-
-                // 测试翻译
-                let testText = "测试翻译"
-                let direction = languageResolver.resolve(for: testText)
-                let result = try await openAIService.translate(
-                    text: testText,
-                    direction: direction,
-                    settings: settings
+                let service = TranslationService(
+                    settingsStore: appState.settingsStore,
+                    languageDirectionResolver: LanguageDirectionResolver(),
+                    googleService: GoogleTranslateService(httpClient: httpClient),
+                    openAIService: OpenAICompatibleTranslateService(httpClient: httpClient),
+                    deepLService: DeepLTranslateService(httpClient: httpClient)
                 )
+                let result = try await service.translate(text: "测试翻译")
 
                 await MainActor.run {
                     testResult = "✓ 成功: \(result)"
@@ -262,6 +292,27 @@ private extension Binding where Value == AppSettings {
         Binding<String>(
             get: { wrappedValue.model },
             set: { wrappedValue.model = $0 }
+        )
+    }
+
+    var reasoningEffort: Binding<ReasoningEffort?> {
+        Binding<ReasoningEffort?>(
+            get: { wrappedValue.reasoningEffort },
+            set: { wrappedValue.reasoningEffort = $0 }
+        )
+    }
+
+    var deepLAPIKey: Binding<String> {
+        Binding<String>(
+            get: { wrappedValue.deepLAPIKey },
+            set: { wrappedValue.deepLAPIKey = $0 }
+        )
+    }
+
+    var deepLPlan: Binding<DeepLPlan> {
+        Binding<DeepLPlan>(
+            get: { wrappedValue.deepLPlan },
+            set: { wrappedValue.deepLPlan = $0 }
         )
     }
 
